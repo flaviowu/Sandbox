@@ -1,0 +1,2 @@
+# scriptsDoOcio
+Alguns scripts teste

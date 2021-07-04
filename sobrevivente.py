@@ -236,7 +236,7 @@ l_menu = {"lugares": ["Mercado", "Hospital", "Posto de Combustível"], "armas": 
 
 personagem = Sobrevivente(100, 3)
 lugarAtual = Lugar("Abrigo")
-# inicio()
+
 while personagem.vida > 0 and personagem.relogio.dias >= 0:
     status(personagem)
     resp = menu(l_menu["acoes"])

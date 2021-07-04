@@ -2,7 +2,7 @@ from random import randint
 import time
 import sys
 
-
+#Tempo da escrita do texto
 def escrever_rpg(texto):
     for letra in str(texto):
         sys.stdout.write(letra)
@@ -11,7 +11,7 @@ def escrever_rpg(texto):
 
 
 def inicio():
-    textoInicial = "O ano é 2035...\nO que começou em 2019 supostamente como uma gripezinha, se transformou em uma epidemia e de epidemia, evoluiu para pandemia e depois num PANDEMONIO.\n As pessoas infectadas desenvolveram um tipo de demencia e ficaram violentas. Logo, a doença atingiu a maioria das pessoas e tomou conta do mundo.\nSe você está lendo esta mensagem, você é um sobrevivente!!!\nRecebemos a sua localização, em 3 dias um helicóptero chegará para te resgatar...\nSobreviva até lá!!!\n\n\n"
+    textoInicial = "\nO ano é 2035...\nO que começou em 2019 supostamente como uma gripezinha, se transformou em uma epidemia e de epidemia, evoluiu para pandemia e depois num PANDEMONIO.\n As pessoas infectadas desenvolveram um tipo de demencia e ficaram violentas. Logo, a doença atingiu a maioria das pessoas e tomou conta do mundo.\nSe você está lendo esta mensagem, você é um sobrevivente!!!\nRecebemos a sua localização, em 3 dias um helicóptero chegará para te resgatar...\nSobreviva até lá!!!\n\n\n"
     escrever_rpg(textoInicial)
     introducao = "Você está no seu abrigo, porém, há pouca comida e existem infectados nesta área!\n"
     escrever_rpg(introducao)
@@ -125,12 +125,14 @@ class Sobrevivente:
         self.relogio.passaTempo(dado(15))
 
     def comer(self):
-        escrever_rpg(
-            f"Você consumiu 1 porção de comida e recuperou {'10' if (self.vida <= 90) else (100 - self.vida)} de vida\n")
-        self.vida += 10
-        self.inventario.comida -= 1
-        if self.vida > 200:
-            self.vida = 200
+        if self.vida < 100:
+            self.vida += 10
+            self.inventario.comida -= 1
+            escrever_rpg(f"Você consumiu 1 porção de comida e recuperou 10 de vida\n")
+        else:
+            escrever_rpg("Você consumiu 1 porção de comida\nSua vida ja esta no máximo\n\n")
+        if self.vida > 100:
+            self.vida = 100
         self.relogio.passaTempo(dado(120, 30))
 
     def tomarRemedio(self):

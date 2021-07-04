@@ -127,25 +127,33 @@ class Sobrevivente:
         self.relogio.passaTempo(dado(15))
 
     def comer(self):
-        if self.vida < 100:
+        if self.vida <= 90:
             self.vida += 10
-            self.inventario.comida -= 1
-            escrever_rpg(f"Você consumiu 1 porção de comida e recuperou 10 de vida\n")
-        else:
-            escrever_rpg("Você consumiu 1 porção de comida\nSua vida ja esta no máximo\n\n")
+            escrever_rpg(f"Você consumiu 1 porção de comida e recuperou 10 de vida.\n")
+        elif self.vida == 100:
+            escrever_rpg("Você consumiu 1 porção de comida.\nSua vida ja está no máximo.\n\n")
+        elif 91 < self.vida < 100:
+            escrever_rpg(f"Você consumiu 1 porção de comida e recuperou {100 - self.vida} de vida.\n\n")
+            self.vida += 10
+        self.inventario.comida -= 1
         if self.vida > 100:
             self.vida = 100
         self.relogio.passaTempo(dado(120, 30))
 
     def tomarRemedio(self):
-        if self.infectado == True:
-            self.infectado = False
-            self.inventario.medicamento -= 1
-            escrever_rpg("Você consumiu 1 medicamento e deteve a infecção.\n")
-        else:
+        if self.inventario.medicamento > 0:
+            if self.infectado == True:
+                self.infectado = False
+                self.inventario.medicamento -= 1
+                escrever_rpg("Você consumiu 1 medicamento e deteve a infecção.\n")
+            else:
+                escrever_rpg(
+                    "Você consumiu 1 medicamento mas não surtiu efeito pois você já estava saudável.\n")
+        elif self.inventario.medicamento <= 0:
             escrever_rpg(
-                "Você consumiu 1 medicamento mas não surtiu efeito pois você já estava saudável.\n")
+                    "Você não tem mais medicamentos.\nVá até um Hospital procurar.")
         self.relogio.passaTempo(10)
+        
 
     def locomover(self, lugar):
         if self.inventario.combustivel == 0:
@@ -235,7 +243,7 @@ l_menu = {"lugares": ["Mercado", "Hospital", "Posto de Combustível"], "armas": 
           "luta": ["Atacar", "Fugir"],
           "acoes": ["Ir para outro lugar", "Comer", "Medicar", "Descansar", "Ver Mochila", "Sair"]}
 
-personagem = Sobrevivente(100, 3)
+personagem = Sobrevivente(100, 1)
 lugarAtual = Lugar("Abrigo")
 # inicio()
 while personagem.vida > 0 and personagem.relogio.dias >= 0:

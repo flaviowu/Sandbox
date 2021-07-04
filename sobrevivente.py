@@ -108,9 +108,11 @@ class Sobrevivente:
             escrever_rpg(f"Voce tem {self.inventario.municao} balas")
         inimigo.tomarDano(dado(20) * dmgMod * self.dmg)
         self.relogio.passaTempo(10)
+        self.energia -= 1
 
     def tomarDano(self, dmg):
         self.vida -= dmg
+        self.energia -= 1
         if self.vida < 0:
             escrever_rpg("Você Morreu!\n")
         if self.infectado == False:
@@ -148,14 +150,13 @@ class Sobrevivente:
             self.energia -= 5
             deltaT = dado(360, 30)
             escrever_rpg(
-                f"Você foi andando até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 5 de energia\n")
+                f"Você foi empurrando a moto até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 5 de energia\n")
         else:
             deltaT = dado(120, 10)
             self.inventario.combustivel -= 1
-        escrever_rpg(
-            f"Você pegou a sua moto e pilotou até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 1 gl de combustível\n")
+            escrever_rpg(
+                f"Você pegou a sua moto e pilotou até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 1 gl de combustível\n")
         self.lugar = lugar
-
         self.relogio.passaTempo(deltaT)
 
     def pegarSuprimento(self, lugar):

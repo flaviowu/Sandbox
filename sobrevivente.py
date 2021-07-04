@@ -58,7 +58,8 @@ def menu(lista):
 #     return int(input(">> "))
 
 
-def luta(p, z):
+def luta(p):
+    z = Zumbi()
     while p.vida > 0 and z.vida > 0:
         ini = dado(20)
         if ini <= 4:
@@ -90,13 +91,15 @@ class Sobrevivente:
         self.inventario = Inventario(5, 10, 5)
 
     def __str__(self):
-        return f"Vida: {self.vida}\nEnergia: {self.energia}\n{'Infectado' if self.infectado == True else 'Saudável'}"
+        return f"Vida: {self.vida}\nEnergia: {self.energia}\nStatus: {'Infectado' if self.infectado == True else 'Saudável'}\n"
 
     def atacar(self, inimigo, arma):
         if arma == 1:
             dmgMod = 1.3
         elif arma == 2:
             dmgMod = 2
+            self.inventario.municao -= 1
+            escrever_rpg(str(f"Voce tem {self.inventario.municao} balas"))
         inimigo.tomarDano(dado(20) * dmgMod * self.dmg)
 
     def tomarDano(self, dmg):
@@ -123,6 +126,14 @@ class Sobrevivente:
         self.lugar = lugar
         self.inventario.combustivel -= 1
 
+    def pegarSuprimento(self, lugar):
+        if lugar == "Mercado":
+            self.inventario.comida += lugar.item
+        if lugar == "Hospital":
+            self.inventario.medicamento += lugar.item
+        if lugar == "Posto de Combustível":
+            self.inventario.combustivel += lugar.item
+
     def descansar(self):
         self.energia += 5
         self.inventario.comida -= 3
@@ -132,7 +143,7 @@ class Sobrevivente:
 
 class Zumbi:
     def __init__(self):
-        self.vida = 20
+        self.vida = 25
         self.dmg = 1
 
     def atacar(self, inimigo):
@@ -142,6 +153,7 @@ class Zumbi:
         self.vida -= dmg
         if self.vida < 0:
             self.vida = 0
+            print("Você derrotou o zumbi.")
 
 
 class Inventario:
@@ -149,8 +161,12 @@ class Inventario:
         self.combustivel = combustivel
         self.comida = comida
         self.medicamento = medicamento
+        self.municao = 10
         self.pistola = True
         self.faca = True
+
+    def __str__(self):
+        return f"Sua mochila tem:\n  Comida: {self.comida} un\n  Medicamentos: {self.medicamento} un\n  Munição: {self.municao}  Combustivel: {self.combustivel} gal\n  Sua Faca\n  Sua Pistola\n"
 
 
 class Lugar:
@@ -158,18 +174,18 @@ class Lugar:
         self.nome = nome
 
     def __str__(self):
-        return f"Localização: {self.nome}"
+        return f"Localização atual: {self.nome}"
 
     def setLugar(self, x):
         if x == 1:
             self.nome = "Mercado"
-            self.item = {"comida": dado(3)}
+            self.item = dado(3)
         if x == 2:
             self.nome = "Hospital"
-            self.item = {"remédio": dado(3)}
+            self.item = dado(3)
         if x == 3:
             self.nome = "Posto de Combustível"
-            self.item = {"gasolina": dado(3)}
+            self.item = dado(3)
         if x == 4:
             self.nome = "Abrigo"
 
@@ -182,8 +198,7 @@ personagem = Sobrevivente(100, False)
 lugarAtual = Lugar("Abrigo")
 relogio = Cronometro(2)
 inicio()
-print(relogio)
-print(personagem)
-print(lugarAtual)
-
-zumbi = Zumbi()
+escrever_rpg(str(relogio))
+escrever_rpg(str(lugarAtual))
+escrever_rpg(str(personagem))
+escrever_rpg(str(personagem.inventario))

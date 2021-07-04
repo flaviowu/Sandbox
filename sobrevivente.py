@@ -186,7 +186,7 @@ class Sobrevivente:
             self.energia = 20
         self.relogio.passaTempo(360)
         escrever_rpg(
-            f"Você dormiu por 8h, recuperou {3 if self.energia <= 17 else 20 - self.energia}\n")
+            f"Você dormiu por 8h e recuperou {3 if self.energia <= 17 else 20 - self.energia} de energia.\n")
 
 
 class Zumbi:

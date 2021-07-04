@@ -11,7 +11,7 @@ def escrever_rpg(texto):
 
 
 def inicio():
-    textoInicial = "O ano é 2035...\nO que começou supostamente como um gripezinha, se transformou em uma epidemia e de epidemia, evoluiu para pandemia e depois num PANDEMONIO.\nSe você está lendo esta mensagem, você é um sobrevivente!!!\nRecebemos a sua localização, em 3 dias um helicóptero chegará para te resgatar...\nSobreviva até lá!!!\n\n\n"
+    textoInicial = "O ano é 2035...\nO que começou em 2019 supostamente como uma gripezinha, se transformou em uma epidemia e de epidemia, evoluiu para pandemia e depois num PANDEMONIO.\n As pessoas infectadas desenvolveram um tipo de demencia e ficaram violentas. Logo, a doença atingiu a maioria das pessoas e tomou conta do mundo.\nSe você está lendo esta mensagem, você é um sobrevivente!!!\nRecebemos a sua localização, em 3 dias um helicóptero chegará para te resgatar...\nSobreviva até lá!!!\n\n\n"
     escrever_rpg(textoInicial)
     introducao = "Você está no seu abrigo, porém, há pouca comida e existem infectados nesta área!\n"
     escrever_rpg(introducao)
@@ -24,7 +24,7 @@ class Cronometro:
         self.minutos = 30
 
     def __str__(self):
-        return f"{self.horas:02d}:{self.minutos:02d}h\n"
+        return f"{self.horas:02d}h{self.minutos:02d}\n"
 
     def passaTempo(self, minutos):
         self.minutos += minutos
@@ -54,9 +54,7 @@ def menu(lista):
 def status(personagem):
     escrever_rpg(f"Faltam {personagem.relogio.dias} dias para o resgate.\n")
     escrever_rpg(personagem.relogio)
-    escrever_rpg(personagem.lugar)
     escrever_rpg(personagem)
-    escrever_rpg(personagem.inventario)
 
 
 def luta(p):
@@ -96,7 +94,10 @@ class Sobrevivente:
         self.relogio = Cronometro(t)
 
     def __str__(self):
-        return f"Vida: {self.vida}\nEnergia: {self.energia}\nStatus: {'Infectado' if self.infectado == True else 'Saudável'}\nLugar Atual: {self.lugar}\n"
+        return f"Vida: {self.vida}\nEnergia: {self.energia}\nStatus: {'Infectado' if self.infectado == True else 'Saudável'}\nLocal Atual: {self.lugar}\n"
+
+    def getInventario(self):
+        escrever_rpg(self.inventario)
 
     def atacar(self, inimigo, arma):
         if arma == "Faca":
@@ -106,7 +107,7 @@ class Sobrevivente:
             self.inventario.municao -= 1
             escrever_rpg(f"Voce tem {self.inventario.municao} balas")
         inimigo.tomarDano(dado(20) * dmgMod * self.dmg)
-        self.relogio.passaTempo(1)
+        self.relogio.passaTempo(10)
 
     def tomarDano(self, dmg):
         self.vida -= dmg
@@ -116,12 +117,12 @@ class Sobrevivente:
             self.infectado = True if dado(2) == 1 else False
         elif self.infectado == True:
             pass
-        self.relogio.passaTempo(1)
+        self.relogio.passaTempo(10)
 
     def fugir(self):
         self.energia -= 2
         escrever_rpg("Você tentou fugir e consumiu 2 de energia\n")
-        self.relogio.passaTempo(dado(7))
+        self.relogio.passaTempo(dado(15))
 
     def comer(self):
         escrever_rpg(
@@ -130,7 +131,7 @@ class Sobrevivente:
         self.inventario.comida -= 1
         if self.vida > 200:
             self.vida = 200
-        self.relogio.passaTempo(dado(20, 15))
+        self.relogio.passaTempo(dado(120, 30))
 
     def tomarRemedio(self):
         if self.infectado == True:
@@ -140,24 +141,37 @@ class Sobrevivente:
         else:
             escrever_rpg(
                 "Você consumiu 1 medicamento mas não surtiu efeito pois você já estava saudável.\n")
-        self.relogio.passaTempo(1)
+        self.relogio.passaTempo(10)
 
     def locomover(self, lugar):
-        self.lugar = lugar
-        self.inventario.combustivel -= 1
-        deltaT = dado(120, 20)
-        self.relogio.passaTempo(deltaT)
+        if self.inventario.combustivel == 0:
+            self.energia -= 5
+            deltaT = dado(360, 30)
+            escrever_rpg(
+                f"Você foi andando até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 5 de energia\n")
+        else:
+            deltaT = dado(120, 10)
+            self.inventario.combustivel -= 1
         escrever_rpg(
-            f"Você chegou ao {lugar} mais próximo, levou {deltaT} minutos e consumiu 1 gl de combustível\n")
+            f"Você pegou a sua moto e pilotou até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 1 gl de combustível\n")
+        self.lugar = lugar
+
+        self.relogio.passaTempo(deltaT)
 
     def pegarSuprimento(self, lugar):
-        if lugar == "Mercado":
+        if lugar.nome == "Mercado":
+            escrever_rpg(
+                f"Você encontrou {lugar.item} un de comida e colocou na mochila\n")
             self.inventario.comida += lugar.item
-        elif lugar == "Hospital":
+        elif lugar.nome == "Hospital":
+            escrever_rpg(
+                f"Você encontrou {lugar.item} un de cloropina e colocou na mochila\n")
             self.inventario.medicamento += lugar.item
-        elif lugar == "Posto de Combustível":
+        elif lugar.nome == "Posto de Combustível":
+            escrever_rpg(
+                f"Você encontrou {lugar.item} gl de Gasolina e colocou na moto\n")
             self.inventario.combustivel += lugar.item
-        elif lugar == "Abrigo":
+        elif lugar.nome == "Abrigo":
             pass
         self.relogio.passaTempo(dado(10, 2))
 
@@ -203,41 +217,44 @@ class Inventario:
 class Lugar:
     def __init__(self, nome):
         self.nome = nome
+        self.item = 0
 
     def __str__(self):
         return {self.nome}
 
     def setLugar(self, novoLugar):
-        if novoLugar == "Abrigo":
-            pass
-        else:
+        if novoLugar != "Abrigo":
             self.item = dado(3)
         self.nome = novoLugar
 
 
 l_menu = {"lugares": ["Mercado", "Hospital", "Posto de Combustível"], "armas": ["Faca", "Pistola"],
           "luta": ["Atacar", "Fugir"],
-          "acoes": ["Ir para outro lugar", "Comer", "Medicar", "Descansar", "Sair"]}
+          "acoes": ["Ir para outro lugar", "Comer", "Medicar", "Descansar", "Ver Mochila", "Sair"]}
 
 personagem = Sobrevivente(100, 3)
 lugarAtual = Lugar("Abrigo")
-inicio()
-while True:
+# inicio()
+while personagem.vida > 0 and personagem.relogio.dias >= 0:
     status(personagem)
     resp = menu(l_menu["acoes"])
     if resp == "Ir para outro lugar":
-        l_menu["lugares"].sort()
         resp = menu(l_menu["lugares"])
-        l_menu["lugares"].append(lugarAtual)
+        l_menu["lugares"].append(lugarAtual.nome)
+        print(l_menu["lugares"])
         personagem.locomover(resp)
         lugarAtual.setLugar(resp)
-        l_menu["lugares"].remove(lugarAtual)
+        l_menu["lugares"].remove(resp)
+        print(l_menu["lugares"])
         luta(personagem)
+        personagem.pegarSuprimento(lugarAtual)
     elif resp == "Comer":
         personagem.comer()
     elif resp == "Medicar":
         personagem.tomarRemedio()
     elif resp == "Descansar":
         personagem.descansar()
+    elif resp == "Ver Mochila":
+        personagem.getInventario()
     elif resp == "Sair":
         break

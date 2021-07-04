@@ -59,7 +59,7 @@ def status(personagem):
 
 def luta(p):
     n = dado(3, 1)
-    escrever_rpg(f"Cuidado! Você encontrou {n} zumbis!\n")
+    escrever_rpg(f"Cuidado! Você encontrou {n} zumbi(s)!\n")
     while n > 0:
         z = Zumbi()
         while p.vida > 0 and z.vida > 0:
@@ -105,7 +105,7 @@ class Sobrevivente:
         elif arma == "Pistola":
             dmgMod = 2
             self.inventario.municao -= 1
-            escrever_rpg(f"Voce tem {self.inventario.municao} balas")
+            escrever_rpg(f"Voce tem {self.inventario.municao} balas\n")
         inimigo.tomarDano(dado(20) * dmgMod * self.dmg)
         self.relogio.passaTempo(10)
         self.energia -= 1
@@ -127,12 +127,14 @@ class Sobrevivente:
         self.relogio.passaTempo(dado(15))
 
     def comer(self):
-        escrever_rpg(
-            f"Você consumiu 1 porção de comida e recuperou {'10' if (self.vida <= 90) else (100 - self.vida)} de vida\n")
-        self.vida += 10
-        self.inventario.comida -= 1
-        if self.vida > 200:
-            self.vida = 200
+        if self.vida < 100:
+            self.vida += 10
+            self.inventario.comida -= 1
+            escrever_rpg(f"Você consumiu 1 porção de comida e recuperou 10 de vida\n")
+        else:
+            escrever_rpg("Você consumiu 1 porção de comida\nSua vida ja esta no máximo\n\n")
+        if self.vida > 100:
+            self.vida = 100
         self.relogio.passaTempo(dado(120, 30))
 
     def tomarRemedio(self):

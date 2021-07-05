@@ -278,3 +278,4 @@ while personagem.vida > 0 and personagem.relogio.dias >= 0:
     elif resp == "Sair":
         break
 # teste git
+# teste git2

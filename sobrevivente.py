@@ -267,7 +267,7 @@ while personagem.vida > 0 and personagem.relogio.dias >= 0:
         print(l_menu["lugares"])
         luta(personagem)
         personagem.pegarSuprimento(lugarAtual)
-    elif resp == "Comer":
+    elif resp == "Almoçar":
         personagem.comer()
     elif resp == "Medicar":
         personagem.tomarRemedio()

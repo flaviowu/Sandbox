@@ -267,7 +267,7 @@ while personagem.vida > 0 and personagem.relogio.dias >= 0:
         print(l_menu["lugares"])
         luta(personagem)
         personagem.pegarSuprimento(lugarAtual)
-    elif resp == "Almoçar":
+    elif resp == "Comer":
         personagem.comer()
     elif resp == "Medicar":
         personagem.tomarRemedio()
@@ -277,6 +277,3 @@ while personagem.vida > 0 and personagem.relogio.dias >= 0:
         personagem.getInventario()
     elif resp == "Sair":
         break
-# teste git
-# teste git2
-# teste git3

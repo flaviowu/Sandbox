@@ -45,10 +45,14 @@ def menu(lista):
     for i, v in opcoes:
         escrever_rpg(f"[{i}] - {v}\n")
     # resposta = int(input("Escolha da opção\n-> "))
-    resposta = 20
-    while resposta not in range(1, len(lista)):
-        resposta = int(input("\n-> "))
-        return lista[resposta - 1]
+    resposta = ""
+    resposta_int = 0
+    while True:
+        resposta = input("\n-> ")
+        resposta_int = int(resposta)
+        if resposta_int in list(range(1, len(lista)+1)):
+            break
+    return lista[resposta_int - 1]
 
 
 def status(personagem):
@@ -149,9 +153,10 @@ class Sobrevivente:
             else:
                 escrever_rpg(
                     "Você consumiu 1 medicamento mas não surtiu efeito pois você já estava saudável.\n")
+            self.inventario.medicamento -= 1
         elif self.inventario.medicamento <= 0:
             escrever_rpg(
-                    "Você não tem mais medicamentos.\nVá até um Hospital procurar.")
+                    "Você não tem mais medicamentos.\nVá até um Hospital procurar.\n")
         self.relogio.passaTempo(10)
         
 

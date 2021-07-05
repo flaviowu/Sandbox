@@ -279,3 +279,4 @@ while personagem.vida > 0 and personagem.relogio.dias >= 0:
         break
 # teste git
 # teste git2
+# teste git3

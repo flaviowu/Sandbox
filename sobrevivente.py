@@ -49,10 +49,13 @@ def menu(lista):
     resposta_int = 0
     while True:
         resposta = input("\n-> ")
-        resposta_int = int(resposta)
-        if resposta_int in list(range(1, len(lista)+1)):
-            break
-    return lista[resposta_int - 1]
+        if resposta.isnumeric():
+            resposta_int = int(resposta)
+            if resposta_int in list(range(1, len(lista)+1)):
+                break
+            else: continue
+        else: continue
+    return lista[int(resposta) - 1]
 
 
 def status(personagem):

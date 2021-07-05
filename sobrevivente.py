@@ -277,3 +277,4 @@ while personagem.vida > 0 and personagem.relogio.dias >= 0:
         personagem.getInventario()
     elif resp == "Sair":
         break
+# teste git

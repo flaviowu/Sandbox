@@ -2,7 +2,7 @@ from random import randint
 import time
 import sys
 
-#Tempo da escrita do texto
+
 def escrever_rpg(texto):
     for letra in str(texto):
         sys.stdout.write(letra)
@@ -11,7 +11,7 @@ def escrever_rpg(texto):
 
 
 def inicio():
-    textoInicial = "\nO ano é 2035...\nO que começou em 2019 supostamente como uma gripezinha, se transformou em uma epidemia e de epidemia, evoluiu para pandemia e depois num PANDEMONIO.\n As pessoas infectadas desenvolveram um tipo de demencia e ficaram violentas. Logo, a doença atingiu a maioria das pessoas e tomou conta do mundo.\nSe você está lendo esta mensagem, você é um sobrevivente!!!\nRecebemos a sua localização, em 3 dias um helicóptero chegará para te resgatar...\nSobreviva até lá!!!\n\n\n"
+    textoInicial = "O ano é 2035...\nO que começou em 2019 supostamente como uma gripezinha, se transformou em uma epidemia e de epidemia, evoluiu para pandemia e depois num PANDEMONIO.\n As pessoas infectadas desenvolveram um tipo de demencia e ficaram violentas. Logo, a doença atingiu a maioria das pessoas e tomou conta do mundo.\nSe você está lendo esta mensagem, você é um sobrevivente!!!\nRecebemos a sua localização, em 3 dias um helicóptero chegará para te resgatar...\nSobreviva até lá!!!\n\n\n"
     escrever_rpg(textoInicial)
     introducao = "Você está no seu abrigo, porém, há pouca comida e existem infectados nesta área!\n"
     escrever_rpg(introducao)
@@ -45,10 +45,17 @@ def menu(lista):
     for i, v in opcoes:
         escrever_rpg(f"[{i}] - {v}\n")
     # resposta = int(input("Escolha da opção\n-> "))
-    resposta = 20
-    while resposta not in range(1, len(lista)):
-        resposta = int(input("\n-> "))
-        return lista[resposta - 1]
+    resposta = ""
+    resposta_int = 0
+    while True:
+        resposta = input("\n-> ")
+        if resposta.isnumeric():
+            resposta_int = int(resposta)
+            if resposta_int in list(range(1, len(lista)+1)):
+                break
+            else: continue
+        else: continue
+    return lista[int(resposta) - 1]
 
 
 def status(personagem):
@@ -59,7 +66,7 @@ def status(personagem):
 
 def luta(p):
     n = dado(3, 1)
-    escrever_rpg(f"Cuidado! Você encontrou {n} zumbis!\n")
+    escrever_rpg(f"Cuidado! Você encontrou {n} zumbi(s)!\n")
     while n > 0:
         z = Zumbi()
         while p.vida > 0 and z.vida > 0:
@@ -105,12 +112,14 @@ class Sobrevivente:
         elif arma == "Pistola":
             dmgMod = 2
             self.inventario.municao -= 1
-            escrever_rpg(f"Voce tem {self.inventario.municao} balas")
+            escrever_rpg(f"Voce tem {self.inventario.municao} balas\n")
         inimigo.tomarDano(dado(20) * dmgMod * self.dmg)
         self.relogio.passaTempo(10)
+        self.energia -= 1
 
     def tomarDano(self, dmg):
         self.vida -= dmg
+        self.energia -= 1
         if self.vida < 0:
             escrever_rpg("Você Morreu!\n")
         if self.infectado == False:
@@ -125,39 +134,47 @@ class Sobrevivente:
         self.relogio.passaTempo(dado(15))
 
     def comer(self):
-        if self.vida < 100:
+        if self.vida <= 90:
             self.vida += 10
-            self.inventario.comida -= 1
-            escrever_rpg(f"Você consumiu 1 porção de comida e recuperou 10 de vida\n")
-        else:
-            escrever_rpg("Você consumiu 1 porção de comida\nSua vida ja esta no máximo\n\n")
+            escrever_rpg(f"Você consumiu 1 porção de comida e recuperou 10 de vida.\n")
+        elif self.vida == 100:
+            escrever_rpg("Você consumiu 1 porção de comida.\nSua vida ja está no máximo.\n\n")
+        elif 91 < self.vida < 100:
+            escrever_rpg(f"Você consumiu 1 porção de comida e recuperou {100 - self.vida} de vida.\n\n")
+            self.vida += 10
+        self.inventario.comida -= 1
         if self.vida > 100:
             self.vida = 100
         self.relogio.passaTempo(dado(120, 30))
 
     def tomarRemedio(self):
-        if self.infectado == True:
-            self.infectado = False
+        if self.inventario.medicamento > 0:
+            if self.infectado == True:
+                self.infectado = False
+                self.inventario.medicamento -= 1
+                escrever_rpg("Você consumiu 1 medicamento e deteve a infecção.\n")
+            else:
+                escrever_rpg(
+                    "Você consumiu 1 medicamento mas não surtiu efeito pois você já estava saudável.\n")
             self.inventario.medicamento -= 1
-            escrever_rpg("Você consumiu 1 medicamento e deteve a infecção.\n")
-        else:
+        elif self.inventario.medicamento <= 0:
             escrever_rpg(
-                "Você consumiu 1 medicamento mas não surtiu efeito pois você já estava saudável.\n")
+                    "Você não tem mais medicamentos.\nVá até um Hospital procurar.\n")
         self.relogio.passaTempo(10)
+        
 
     def locomover(self, lugar):
         if self.inventario.combustivel == 0:
             self.energia -= 5
             deltaT = dado(360, 30)
             escrever_rpg(
-                f"Você foi andando até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 5 de energia\n")
+                f"Você foi empurrando a moto até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 5 de energia\n")
         else:
             deltaT = dado(120, 10)
             self.inventario.combustivel -= 1
-        escrever_rpg(
-            f"Você pegou a sua moto e pilotou até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 1 gl de combustível\n")
+            escrever_rpg(
+                f"Você pegou a sua moto e pilotou até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 1 gl de combustível\n")
         self.lugar = lugar
-
         self.relogio.passaTempo(deltaT)
 
     def pegarSuprimento(self, lugar):
@@ -185,7 +202,7 @@ class Sobrevivente:
             self.energia = 20
         self.relogio.passaTempo(360)
         escrever_rpg(
-            f"Você dormiu por 8h, recuperou {3 if self.energia <= 17 else 20 - self.energia}\n")
+            f"Você dormiu por 8h e recuperou {3 if self.energia <= 17 else 20 - self.energia} de energia.\n")
 
 
 class Zumbi:
@@ -234,9 +251,9 @@ l_menu = {"lugares": ["Mercado", "Hospital", "Posto de Combustível"], "armas": 
           "luta": ["Atacar", "Fugir"],
           "acoes": ["Ir para outro lugar", "Comer", "Medicar", "Descansar", "Ver Mochila", "Sair"]}
 
-personagem = Sobrevivente(100, 3)
+personagem = Sobrevivente(100, 1)
 lugarAtual = Lugar("Abrigo")
-
+# inicio()
 while personagem.vida > 0 and personagem.relogio.dias >= 0:
     status(personagem)
     resp = menu(l_menu["acoes"])
@@ -260,3 +277,5 @@ while personagem.vida > 0 and personagem.relogio.dias >= 0:
         personagem.getInventario()
     elif resp == "Sair":
         break
+if personagem.vida >= 0:
+    escrever_rpg("Você morreu antes do tempo.Boa sorte da próxima vez!")

@@ -1,6 +1,7 @@
 from random import randint
 import time
 import sys
+import os
 
 
 def escrever_rpg(texto):
@@ -95,7 +96,7 @@ class Sobrevivente:
         self.vida = vida
         self.infectado = False
         self.dmg = 2
-        self.energia = 20
+        self.energia = 3
         self.lugar = "Abrigo"
         self.inventario = Inventario(1, 1, 2)
         self.relogio = Cronometro(t)
@@ -108,12 +109,13 @@ class Sobrevivente:
 
     def atacar(self, inimigo, arma):
         if arma == "Faca":
-            dmgMod = 1.3   
-        elif arma == "Pistola" :
-            if self.inventario.municao <= 0: 
+            dmgMod = 1.3
+        elif arma == "Pistola":
+            if self.inventario.municao <= 0:
                 dmgMod = 0
-                escrever_rpg(f"Voce não tem mais munição.\nVocê tentou atirar, mas não aconteceu nada.\n")
-            if self.inventario.municao > 0: 
+                escrever_rpg(
+                    f"Voce não tem mais munição.\nVocê tentou atirar, mas não aconteceu nada.\n")
+            if self.inventario.municao > 0:
                 dmgMod = 2
                 self.inventario.municao -= 1
                 escrever_rpg(f"Voce tem {self.inventario.municao} balas\n")
@@ -152,8 +154,9 @@ class Sobrevivente:
             self.vida += 10
             self.inventario.comida -= 1
         elif self.inventario.comida <= 0:
-            escrever_rpg("Você não possui comida suficiente;\nProcure no Mercado.\n\n")
-        
+            escrever_rpg(
+                "Você não possui comida suficiente;\nProcure no Mercado.\n\n")
+
         if self.vida > 100:
             self.vida = 100
         self.relogio.passaTempo(dado(120, 30))
@@ -175,18 +178,22 @@ class Sobrevivente:
         self.relogio.passaTempo(10)
 
     def locomover(self, lugar):
-        if self.inventario.combustivel == 0:
-            self.energia -= 5
-            deltaT = dado(360, 30)
-            escrever_rpg(
-                f"Você foi empurrando a moto até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 5 de energia\n")
+        if self.energia > 0:
+            if self.inventario.combustivel == 0:
+                self.energia -= 5
+                deltaT = dado(360, 30)
+                escrever_rpg(
+                    f"Você foi empurrando a moto até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 5 de energia\n")
+            else:
+                deltaT = dado(120, 10)
+                self.inventario.combustivel -= 1
+                escrever_rpg(
+                    f"Você pegou a sua moto e pilotou até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 1 gl de combustível\n")
+            self.lugar = lugar
+            self.relogio.passaTempo(deltaT)
         else:
-            deltaT = dado(120, 10)
-            self.inventario.combustivel -= 1
             escrever_rpg(
-                f"Você pegou a sua moto e pilotou até o {lugar} mais próximo, levou {deltaT} minutos e consumiu 1 gl de combustível\n")
-        self.lugar = lugar
-        self.relogio.passaTempo(deltaT)
+                "Sua energia está muito baixa e você não consegue mais se locomover. Descanse.")
 
     def pegarSuprimento(self, lugar):
         if lugar.nome == "Mercado":
@@ -206,7 +213,7 @@ class Sobrevivente:
         self.relogio.passaTempo(dado(10, 2))
 
     def descansar(self):
-        self.energia += 3
+        self.energia += 10
         if self.lugar != "Abrigo":
             self.inventario.comida -= 3
         if self.energia > 20:
@@ -268,6 +275,7 @@ lugarAtual = Lugar("Abrigo")
 while personagem.vida > 0 and personagem.relogio.dias >= 0:
     status(personagem)
     resp = menu(l_menu["acoes"])
+    os.system("cls")
     if resp == "Ir para outro lugar":
         resp = menu(l_menu["lugares"])
         l_menu["lugares"].append(lugarAtual.nome)
@@ -290,7 +298,8 @@ while personagem.vida > 0 and personagem.relogio.dias >= 0:
         break
 
 if personagem.vida <= 0:
-    escrever_rpg("Você tentou sobreviver até o resgate chegar, porém, não conseguiu. Game Over.")
+    escrever_rpg(
+        "Você tentou sobreviver até o resgate chegar, porém, não conseguiu. Game Over.")
 elif personagem.relogio.dias <= 0:
-    escrever_rpg("O helicóptero chegou. Você foi resgatado. Agora você faz parte do grupo seleto de SOBREVIVENTES.")
-
+    escrever_rpg(
+        "O helicóptero chegou. Você foi resgatado. Agora você faz parte do grupo seleto de SOBREVIVENTES.")

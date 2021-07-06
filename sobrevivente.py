@@ -1,10 +1,10 @@
-from random import randint
-import time
-import sys
-import os
+from random import randint  #Importação aleatoriedade função dado!
+import time #Importação função escrever_rpg
+import sys #Importação função escrever_rpg
+import os #importação funcao clear
 
 
-def escrever_rpg(texto):
+def escrever_rpg(texto): #Escreve o texto com temporizador de letra
     for letra in str(texto):
         sys.stdout.write(letra)
         sys.stdout.flush()
@@ -18,7 +18,7 @@ def inicio():
     escrever_rpg(introducao)
 
 
-class Cronometro:
+class Cronometro:   #
     def __init__(self, dias):
         self.dias = dias
         self.horas = 7
@@ -214,8 +214,7 @@ class Sobrevivente:
 
     def descansar(self):
         self.energia += 10
-        if self.lugar != "Abrigo":
-            self.inventario.comida -= 3
+        #self.vida -= 20   
         if self.energia > 20:
             self.energia = 20
         self.relogio.passaTempo(360)

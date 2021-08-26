@@ -26,4 +26,8 @@ console.log(produtosBaratos)
 console.log(lista.every( item => item.preco > 2000)) // testa se todos os preços são maiores do que 2000
 
 const precoTotal = lista.reduce( (totalParcial, item) => totalParcial + item.preco, 0)
-console.log(precoTotal)
+console.log(precoTotal) // 10150
+
+numbers = [10, 55, 63, 74, 98, 47, 14, 27, 79, 64]
+console.log(numbers.includes(74)) // true
+console.log(numbers.includes(97)) // false

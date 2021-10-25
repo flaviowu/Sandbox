@@ -14,7 +14,7 @@ list1 = [randrange(1, 100, 1) for i in range(10)]
 newList1 = [v/2 for v in list1 if v >= 27]
 print(f"Lista 1: {list1}")
 print(f"Nova Lista 1: {newList1}")
-print ("=-"*30)
+print ("=-"*37)
 
 # Pega o valor da tupla se for par
 fonte = (10, 25, 62, 11, 27, 67, 96, 47)
